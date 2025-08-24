@@ -1,103 +1,179 @@
-import Image from "next/image";
+"use client"
+import { useState, useEffect, useCallback } from "react"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import { Hourglass, Play, StopCircle } from "lucide-react"
+type FastingRecord = {
+  startTime: string
+  endTime: string
+  duration: number
+}
+export default function HomePage() {
+  const [isActive, setIsActive] = useState<boolean>(false)
+  const [startTime, setStartTime] = useState<Date | null>(null)
+  const [elapsedTime, setElapsedTime] = useState<number>(0)
+  const [history, setHistory] = useState<FastingRecord[]>([])
 
-export default function Home() {
+  useEffect(() => {
+    try {
+      const storedHistory = localStorage.getItem("fastingHistory")
+      if (storedHistory) {
+        setHistory(JSON.parse(storedHistory))
+      }
+
+      const activeFastStart = localStorage.getItem("activeFastStartTime")
+      if (activeFastStart) {
+        const startTimeDate = new Date(activeFastStart)
+        setStartTime(startTimeDate)
+        setIsActive(true)
+        setElapsedTime(
+          Math.floor((new Date().getTime() - startTimeDate.getTime()) / 1000)
+        )
+      }
+    } catch (error) {
+      console.error("Failed to access localStorage:", error)
+    }
+  }, [])
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null
+    if (isActive && startTime) {
+      interval = setInterval(() => {
+        setElapsedTime(
+          Math.floor((new Date().getTime() - startTime.getTime()) / 1000)
+        )
+      }, 1000)
+    } else if (!isActive && elapsedTime !== 0) {
+    }
+    return () => {
+      if (interval) clearInterval(interval)
+    }
+  }, [isActive, startTime])
+  // ---- Event handlers ----
+  const handleStart = useCallback(() => {
+    const now = new Date()
+    setStartTime(now)
+    setIsActive(true)
+    setElapsedTime(0)
+    localStorage.setItem("activeFastStartTime", now.toISOString())
+  }, [])
+  const handleStop = useCallback(() => {
+    if (!startTime) return
+
+    setIsActive(false)
+    const endTime = new Date()
+    const duration = Math.floor(
+      (endTime.getTime() - startTime.getTime()) / 1000
+    )
+
+    const newRecord: FastingRecord = {
+      startTime: startTime.toISOString(),
+      endTime: endTime.toISOString(),
+      duration,
+    }
+
+    const updatedHistory = [newRecord, ...history]
+    setHistory(updatedHistory)
+    localStorage.setItem("fastingHistory", JSON.stringify(updatedHistory))
+
+    // clean current fasting
+    localStorage.removeItem("activeFastStartTime")
+    setStartTime(null)
+  }, [startTime, history])
+
+  const formatDuration = (totalSeconds: number): string => {
+    const hours = Math.floor(totalSeconds / 3600)
+      .toString()
+      .padStart(2, "0")
+    const minutes = Math.floor((totalSeconds % 3600) / 60)
+      .toString()
+      .padStart(2, "0")
+    const seconds = (totalSeconds % 60).toString().padStart(2, "0")
+    return `${hours}:${minutes}:${seconds}`
+  }
+  const formatDate = (dateString: string): string => {
+    return new Date(dateString).toLocaleString("fr-FR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    })
+  }
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+    <main className='container mx-auto p-4 md:p-8 flex flex-col items-center'>
+      <div className='w-full max-w-2xl space-y-8'>
+        <Card className='text-center'>
+          <CardHeader>
+            <CardTitle className='text-2xl md:text-3xl font-bold tracking-tight'>
+              {isActive ? "Jeûne en cours" : "Prêt à jeûner ?"}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className='space-y-6'>
+            <div className='font-mono text-6xl md:text-8xl font-extrabold text-primary tabular-nums'>
+              {formatDuration(elapsedTime)}
+            </div>
+            {!isActive ? (
+              <Button size='lg' className='w-full' onClick={handleStart}>
+                <Play className='mr-2 h-5 w-5' /> Démarrer le jeûne
+              </Button>
+            ) : (
+              <Button
+                variant='destructive'
+                size='lg'
+                className='w-full'
+                onClick={handleStop}
+              >
+                <StopCircle className='mr-2 h-5 w-5' /> Arrêter et enregistrer
+              </Button>
+            )}
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className='flex items-center'>
+              <Hourglass className='mr-2 h-5 w-5' />
+              Historique des jeûnes
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {history.length > 0 ? (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Début</TableHead>
+                    <TableHead>Fin</TableHead>
+                    <TableHead className='text-right'>Durée</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {history.map((record) => (
+                    <TableRow key={record.startTime}>
+                      <TableCell>{formatDate(record.startTime)}</TableCell>
+                      <TableCell>{formatDate(record.endTime)}</TableCell>
+                      <TableCell className='text-right font-medium'>
+                        {formatDuration(record.duration)}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            ) : (
+              <p className='text-center text-muted-foreground py-4'>
+                Aucun jeûne enregistré pour le moment.
+              </p>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    </main>
+  )
 }
