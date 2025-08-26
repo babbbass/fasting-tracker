@@ -7,6 +7,7 @@ import { formatDuration } from "@/lib/utils"
 import { SaveFastingDialog } from "./SaveFastingDialog"
 import { FastingRecordType } from "@/lib/types"
 import { useHistoryStore } from "@/lib/historyStore"
+import { FASTING_HISTORY } from "@/lib/constants"
 
 export function Counter() {
   const [isActive, setIsActive] = useState<boolean>(false)
@@ -41,7 +42,7 @@ export function Counter() {
     }
 
     addFastingRecord(newRecord)
-    localStorage.setItem("fastingHistory", JSON.stringify(history))
+    localStorage.setItem(FASTING_HISTORY, JSON.stringify(history))
 
     // clean current fasting
     localStorage.removeItem("activeFastStartTime")
@@ -110,7 +111,6 @@ export function Counter() {
               variant='destructive'
               size='lg'
               className='w-full cursor-pointer'
-              //onClick={handleStop}
               onClick={() => setIsConfirmOpen(true)}
             >
               <StopCircle className='mr-2 h-5 w-5' /> Arrêter et enregistrer

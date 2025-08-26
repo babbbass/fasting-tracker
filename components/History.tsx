@@ -8,72 +8,85 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card"
-import { Hourglass } from "lucide-react"
+import { Hourglass, Trash } from "lucide-react"
 import { formatDate, formatDuration } from "@/lib/utils"
 import { useHistoryStore } from "@/lib/historyStore"
+import { DeleteFastingDialog } from "./DeleteFastingDialog"
+import { useState, useCallback } from "react"
+import { deleteRecordByStartTime } from "@/lib/utils"
 
 export function History() {
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false)
+  const [startTimeFastingToDelete, setStartTimeFastingToDelete] = useState("")
   const { history } = useHistoryStore()
-  // const [isActive, setIsActive] = useState<boolean>(false)
-  // const [startTime, setStartTime] = useState<Date | null>(null)
-  // const [elapsedTime, setElapsedTime] = useState<number>(0)
+  console.log(history)
 
-  // useEffect(() => {
-  //   try {
-  //     // const storedHistory = localStorage.getItem("fastingHistory")
-  //     // if (storedHistory) {
-  //     //   setHistory(JSON.parse(storedHistory))
-  //     // }
+  const handleCancel = useCallback(() => {
+    setIsConfirmOpen(false)
+  }, [])
 
-  //   //   const activeFastStart = localStorage.getItem("activeFastStartTime")
-  //   //   if (activeFastStart) {
-  //   //     const startTimeDate = new Date(activeFastStart)
-  //   //     setStartTime(startTimeDate)
-  //   //     setIsActive(true)
-  //   //     setElapsedTime(
-  //   //       Math.floor((new Date().getTime() - startTimeDate.getTime()) / 1000)
-  //   //     )
-  //   //   }
-  //   // } catch (error) {
-  //   //   console.error("Failed to access localStorage:", error)
-  //   // }
-  // }, [])
+  const handleDelete = useCallback((id: string) => {
+    // console.log(id)
+    deleteRecordByStartTime(id)
+    setIsConfirmOpen(false)
+  }, [])
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className='flex items-center'>
-          <Hourglass className='mr-2 h-5 w-5' />
-          Historique des jeûnes
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        {history.length > 0 ? (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Début</TableHead>
-                <TableHead>Fin</TableHead>
-                <TableHead className='text-right'>Durée</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {history.map((record) => (
-                <TableRow key={record.startTime}>
-                  <TableCell>{formatDate(record.startTime)}</TableCell>
-                  <TableCell>{formatDate(record.endTime)}</TableCell>
-                  <TableCell className='text-right font-medium'>
-                    {formatDuration(record.duration)}
-                  </TableCell>
+    <>
+      <Card>
+        <CardHeader>
+          <CardTitle className='flex items-center'>
+            <Hourglass className='mr-2 h-5 w-5' />
+            Historique des jeûnes
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {history.length > 0 ? (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Début</TableHead>
+                  <TableHead>Fin</TableHead>
+                  <TableHead className='text-right'>Durée</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        ) : (
-          <p className='text-center text-muted-foreground py-4'>
-            Aucun jeûne enregistré pour le moment.
-          </p>
-        )}
-      </CardContent>
-    </Card>
+              </TableHeader>
+              <TableBody>
+                {history.map((record) => (
+                  <TableRow key={record.startTime}>
+                    <TableCell>{formatDate(record.startTime)}</TableCell>
+                    <TableCell>{formatDate(record.endTime)}</TableCell>
+                    <TableCell className='text-right font-medium'>
+                      {formatDuration(record.duration)}
+                    </TableCell>
+                    <TableCell className='text-right font-medium '>
+                      <div className='flex justify-end'>
+                        <Trash
+                          className='h-3 w-3 text-red-600 cursor-pointer'
+                          onClick={() => {
+                            setStartTimeFastingToDelete(record.startTime)
+                            setIsConfirmOpen(true)
+                          }}
+                        />
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          ) : (
+            <p className='text-center text-muted-foreground py-4'>
+              Aucun jeûne enregistré pour le moment.
+            </p>
+          )}
+        </CardContent>
+      </Card>
+      <DeleteFastingDialog
+        isConfirmOpen={isConfirmOpen}
+        setIsConfirmOpen={setIsConfirmOpen}
+        handleCancel={handleCancel}
+        handleDelete={handleDelete}
+        startTimeFastingToDelete={startTimeFastingToDelete}
+      />
+    </>
   )
 }
