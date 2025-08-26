@@ -8,19 +8,75 @@ import {
 } from "@/components/ui/dialog"
 import { Button } from "./ui/button"
 import { Save, Trash2 } from "lucide-react"
-
+import { useCallback } from "react"
+import { FASTING_HISTORY } from "@/lib/constants"
+import { FastingRecordType } from "@/lib/types"
+import { useHistoryStore } from "@/lib/historyStore"
 type SaveFastingDialogType = {
   isConfirmOpen: boolean
   setIsConfirmOpen: React.Dispatch<React.SetStateAction<boolean>>
-  handleDiscard: () => void
-  handleSaveAndStop: () => void
+  setIsActive: React.Dispatch<React.SetStateAction<boolean>>
+  setElapsedTime: React.Dispatch<React.SetStateAction<number>>
+  setStartTime: React.Dispatch<React.SetStateAction<Date | null>>
+  startTime: Date | null
 }
+
 export function SaveFastingDialog({
   isConfirmOpen,
   setIsConfirmOpen,
-  handleDiscard,
-  handleSaveAndStop,
+  setIsActive,
+  setElapsedTime,
+  setStartTime,
+  startTime,
 }: SaveFastingDialogType) {
+  const { history, addFastingRecord } = useHistoryStore()
+
+  // STOP
+  const handleSaveAndStop = useCallback(() => {
+    if (!startTime) return
+
+    setIsActive(false)
+    const endTime = new Date()
+    const duration = Math.floor(
+      (endTime.getTime() - startTime.getTime()) / 1000
+    )
+
+    const newRecord: FastingRecordType = {
+      startTime: startTime.toISOString(),
+      endTime: endTime.toISOString(),
+      duration,
+    }
+
+    addFastingRecord(newRecord)
+    localStorage.setItem(
+      FASTING_HISTORY,
+      history.length > 0
+        ? JSON.stringify([newRecord, ...history])
+        : JSON.stringify([newRecord])
+    )
+
+    // clean current fasting
+    localStorage.removeItem("activeFastStartTime")
+    setStartTime(null)
+    setElapsedTime(0)
+    setIsConfirmOpen(false)
+  }, [
+    setElapsedTime,
+    setIsConfirmOpen,
+    setIsActive,
+    setStartTime,
+    addFastingRecord,
+    history,
+    startTime,
+  ])
+
+  const handleDiscard = useCallback(() => {
+    setIsActive(false)
+    localStorage.removeItem("activeFastStartTime")
+    setStartTime(null)
+    setElapsedTime(0)
+    setIsConfirmOpen(false)
+  }, [setElapsedTime, setIsConfirmOpen, setIsActive, setStartTime])
   return (
     <Dialog open={isConfirmOpen} onOpenChange={setIsConfirmOpen}>
       <DialogContent className='sm:max-w-[425px]'>

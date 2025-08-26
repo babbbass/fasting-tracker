@@ -1,60 +1,16 @@
 "use client"
-import { useState, useCallback, useEffect } from "react"
-import { Button } from "@/components/ui/button"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { StopCircle } from "lucide-react"
 import { formatDuration } from "@/lib/utils"
 import { SaveFastingDialog } from "./SaveFastingDialog"
-import { FastingRecordType } from "@/lib/types"
-import { useHistoryStore } from "@/lib/historyStore"
-import { FASTING_HISTORY } from "@/lib/constants"
 import { StartButton } from "@/components/StartButton"
+import { StopButton } from "./StopButton"
 
 export function Counter() {
   const [isActive, setIsActive] = useState<boolean>(false)
   const [elapsedTime, setElapsedTime] = useState<number>(0)
-  const [startTime, setStartTime] = useState<Date | null>(null)
   const [isConfirmOpen, setIsConfirmOpen] = useState(false)
-  const { history, addFastingRecord } = useHistoryStore()
-
-  // STOP
-  const handleStop = useCallback(() => {
-    if (!startTime) return
-
-    setIsActive(false)
-    const endTime = new Date()
-    const duration = Math.floor(
-      (endTime.getTime() - startTime.getTime()) / 1000
-    )
-
-    const newRecord: FastingRecordType = {
-      startTime: startTime.toISOString(),
-      endTime: endTime.toISOString(),
-      duration,
-    }
-
-    addFastingRecord(newRecord)
-    localStorage.setItem(
-      FASTING_HISTORY,
-      history.length > 0
-        ? JSON.stringify([newRecord, ...history])
-        : JSON.stringify([newRecord])
-    )
-
-    // clean current fasting
-    localStorage.removeItem("activeFastStartTime")
-    setStartTime(null)
-    setElapsedTime(0)
-    setIsConfirmOpen(false)
-  }, [startTime, addFastingRecord, history])
-
-  const handleDiscard = useCallback(() => {
-    setIsActive(false)
-    localStorage.removeItem("activeFastStartTime")
-    setStartTime(null)
-    setElapsedTime(0)
-    setIsConfirmOpen(false)
-  }, [])
+  const [startTime, setStartTime] = useState<Date | null>(null)
 
   useEffect(() => {
     const activeFastStart = localStorage.getItem("activeFastStartTime")
@@ -102,22 +58,17 @@ export function Counter() {
               setStartTime={setStartTime}
             />
           ) : (
-            <Button
-              variant='destructive'
-              size='lg'
-              className='w-full cursor-pointer'
-              onClick={() => setIsConfirmOpen(true)}
-            >
-              <StopCircle className='mr-2 h-5 w-5' /> Arrêter et enregistrer
-            </Button>
+            <StopButton setIsConfirmOpen={setIsConfirmOpen} />
           )}
         </CardContent>
       </Card>
       <SaveFastingDialog
-        handleDiscard={handleDiscard}
-        handleSaveAndStop={handleStop}
         isConfirmOpen={isConfirmOpen}
         setIsConfirmOpen={setIsConfirmOpen}
+        setIsActive={setIsActive}
+        setElapsedTime={setElapsedTime}
+        setStartTime={setStartTime}
+        startTime={startTime}
       />
     </>
   )
