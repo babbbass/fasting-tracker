@@ -5,15 +5,17 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Play, StopCircle } from "lucide-react"
 import { formatDuration } from "@/lib/utils"
 import { SaveFastingDialog } from "./SaveFastingDialog"
-// import { FastingRecordType } from "@/lib/types"
+import { FastingRecordType } from "@/lib/types"
+import { useHistoryStore } from "@/lib/historyStore"
 
 export function Counter() {
   const [isActive, setIsActive] = useState<boolean>(false)
   const [elapsedTime, setElapsedTime] = useState<number>(0)
   const [startTime, setStartTime] = useState<Date | null>(null)
   const [isConfirmOpen, setIsConfirmOpen] = useState(false)
+  const { history, addFastingRecord } = useHistoryStore()
 
-  // START AND STOP
+  // START
   const handleStart = useCallback(() => {
     const now = new Date()
     setStartTime(now)
@@ -22,30 +24,30 @@ export function Counter() {
     localStorage.setItem("activeFastStartTime", now.toISOString())
   }, [])
 
+  // STOP
   const handleStop = useCallback(() => {
     if (!startTime) return
 
     setIsActive(false)
-    //const endTime = new Date()
-    // const duration = Math.floor(
-    //   (endTime.getTime() - startTime.getTime()) / 1000
-    // )
+    const endTime = new Date()
+    const duration = Math.floor(
+      (endTime.getTime() - startTime.getTime()) / 1000
+    )
 
-    // const newRecord: FastingRecordType = {
-    //   startTime: startTime.toISOString(),
-    //   endTime: endTime.toISOString(),
-    //   duration,
-    // }
+    const newRecord: FastingRecordType = {
+      startTime: startTime.toISOString(),
+      endTime: endTime.toISOString(),
+      duration,
+    }
 
-    // const updatedHistory = [newRecord, ...history]
-    // setHistory(updatedHistory)
-    // localStorage.setItem("fastingHistory", JSON.stringify(updatedHistory))
+    addFastingRecord(newRecord)
+    localStorage.setItem("fastingHistory", JSON.stringify(history))
 
     // clean current fasting
     localStorage.removeItem("activeFastStartTime")
     setStartTime(null)
     setIsConfirmOpen(false)
-  }, [startTime])
+  }, [startTime, addFastingRecord, history])
 
   const handleDiscard = useCallback(() => {
     setIsActive(false)
@@ -56,12 +58,6 @@ export function Counter() {
   }, [])
 
   useEffect(() => {
-    //   try {
-    // const storedHistory = localStorage.getItem("fastingHistory")
-    // if (storedHistory) {
-    //   setHistory(JSON.parse(storedHistory))
-    // }
-
     const activeFastStart = localStorage.getItem("activeFastStartTime")
     if (activeFastStart) {
       const startTimeDate = new Date(activeFastStart)
@@ -71,9 +67,6 @@ export function Counter() {
         Math.floor((new Date().getTime() - startTimeDate.getTime()) / 1000)
       )
     }
-    //   } catch (error) {
-    //     console.error("Failed to access localStorage:", error)
-    //   }
   }, [])
 
   useEffect(() => {

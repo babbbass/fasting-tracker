@@ -1,5 +1,4 @@
 "use client"
-import { useState, useEffect } from "react"
 import {
   Table,
   TableBody,
@@ -11,34 +10,34 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card"
 import { Hourglass } from "lucide-react"
 import { formatDate, formatDuration } from "@/lib/utils"
-import { FastingRecordType } from "@/lib/types"
+import { useHistoryStore } from "@/lib/historyStore"
 
-export function Historic() {
-  const [history, setHistory] = useState<FastingRecordType[]>([])
-  const [isActive, setIsActive] = useState<boolean>(false)
-  const [startTime, setStartTime] = useState<Date | null>(null)
-  const [elapsedTime, setElapsedTime] = useState<number>(0)
+export function History() {
+  const { history } = useHistoryStore()
+  // const [isActive, setIsActive] = useState<boolean>(false)
+  // const [startTime, setStartTime] = useState<Date | null>(null)
+  // const [elapsedTime, setElapsedTime] = useState<number>(0)
 
-  useEffect(() => {
-    try {
-      const storedHistory = localStorage.getItem("fastingHistory")
-      if (storedHistory) {
-        setHistory(JSON.parse(storedHistory))
-      }
+  // useEffect(() => {
+  //   try {
+  //     // const storedHistory = localStorage.getItem("fastingHistory")
+  //     // if (storedHistory) {
+  //     //   setHistory(JSON.parse(storedHistory))
+  //     // }
 
-      const activeFastStart = localStorage.getItem("activeFastStartTime")
-      if (activeFastStart) {
-        const startTimeDate = new Date(activeFastStart)
-        setStartTime(startTimeDate)
-        setIsActive(true)
-        setElapsedTime(
-          Math.floor((new Date().getTime() - startTimeDate.getTime()) / 1000)
-        )
-      }
-    } catch (error) {
-      console.error("Failed to access localStorage:", error)
-    }
-  }, [])
+  //   //   const activeFastStart = localStorage.getItem("activeFastStartTime")
+  //   //   if (activeFastStart) {
+  //   //     const startTimeDate = new Date(activeFastStart)
+  //   //     setStartTime(startTimeDate)
+  //   //     setIsActive(true)
+  //   //     setElapsedTime(
+  //   //       Math.floor((new Date().getTime() - startTimeDate.getTime()) / 1000)
+  //   //     )
+  //   //   }
+  //   // } catch (error) {
+  //   //   console.error("Failed to access localStorage:", error)
+  //   // }
+  // }, [])
   return (
     <Card>
       <CardHeader>
