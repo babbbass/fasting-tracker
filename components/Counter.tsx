@@ -46,6 +46,7 @@ export function Counter() {
     // clean current fasting
     localStorage.removeItem("activeFastStartTime")
     setStartTime(null)
+    setElapsedTime(0)
     setIsConfirmOpen(false)
   }, [startTime, addFastingRecord, history])
 
