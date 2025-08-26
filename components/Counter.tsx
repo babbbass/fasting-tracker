@@ -2,12 +2,13 @@
 import { useState, useCallback, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Play, StopCircle } from "lucide-react"
+import { StopCircle } from "lucide-react"
 import { formatDuration } from "@/lib/utils"
 import { SaveFastingDialog } from "./SaveFastingDialog"
 import { FastingRecordType } from "@/lib/types"
 import { useHistoryStore } from "@/lib/historyStore"
 import { FASTING_HISTORY } from "@/lib/constants"
+import { StartButton } from "@/components/StartButton"
 
 export function Counter() {
   const [isActive, setIsActive] = useState<boolean>(false)
@@ -15,15 +16,6 @@ export function Counter() {
   const [startTime, setStartTime] = useState<Date | null>(null)
   const [isConfirmOpen, setIsConfirmOpen] = useState(false)
   const { history, addFastingRecord } = useHistoryStore()
-
-  // START
-  const handleStart = useCallback(() => {
-    const now = new Date()
-    setStartTime(now)
-    setIsActive(true)
-    setElapsedTime(0)
-    localStorage.setItem("activeFastStartTime", now.toISOString())
-  }, [])
 
   // STOP
   const handleStop = useCallback(() => {
@@ -42,7 +34,12 @@ export function Counter() {
     }
 
     addFastingRecord(newRecord)
-    localStorage.setItem(FASTING_HISTORY, JSON.stringify(history))
+    localStorage.setItem(
+      FASTING_HISTORY,
+      history.length > 0
+        ? JSON.stringify([newRecord, ...history])
+        : JSON.stringify([newRecord])
+    )
 
     // clean current fasting
     localStorage.removeItem("activeFastStartTime")
@@ -99,13 +96,11 @@ export function Counter() {
             {formatDuration(elapsedTime)}
           </div>
           {!isActive ? (
-            <Button
-              size='lg'
-              className='w-full cursor-pointer'
-              onClick={handleStart}
-            >
-              <Play className='mr-2 h-5 w-5' /> Démarrer le jeûne
-            </Button>
+            <StartButton
+              setElapsedTime={setElapsedTime}
+              setIsActive={setIsActive}
+              setStartTime={setStartTime}
+            />
           ) : (
             <Button
               variant='destructive'

@@ -19,14 +19,12 @@ export function History() {
   const [isConfirmOpen, setIsConfirmOpen] = useState(false)
   const [startTimeFastingToDelete, setStartTimeFastingToDelete] = useState("")
   const { history } = useHistoryStore()
-  console.log(history)
 
   const handleCancel = useCallback(() => {
     setIsConfirmOpen(false)
   }, [])
 
   const handleDelete = useCallback((id: string) => {
-    // console.log(id)
     deleteRecordByStartTime(id)
     setIsConfirmOpen(false)
   }, [])
