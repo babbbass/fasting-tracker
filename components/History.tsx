@@ -12,13 +12,13 @@ import { Hourglass, Trash } from "lucide-react"
 import { formatDate, formatDuration } from "@/lib/utils"
 import { useHistoryStore } from "@/lib/historyStore"
 import { DeleteFastingDialog } from "./DeleteFastingDialog"
-import { useState, useCallback } from "react"
+import { useState, useCallback, useEffect, use } from "react"
 import { deleteRecordByStartTime } from "@/lib/utils"
 
 export function History() {
   const [isConfirmOpen, setIsConfirmOpen] = useState(false)
   const [startTimeFastingToDelete, setStartTimeFastingToDelete] = useState("")
-  const { history } = useHistoryStore()
+  const { history, setHistory } = useHistoryStore()
 
   const handleCancel = useCallback(() => {
     setIsConfirmOpen(false)
@@ -27,6 +27,18 @@ export function History() {
   const handleDelete = useCallback((id: string) => {
     deleteRecordByStartTime(id)
     setIsConfirmOpen(false)
+  }, [])
+
+  useEffect(() => {
+    const fastingHistory = localStorage.getItem("fastingHistory")
+    if (fastingHistory) {
+      try {
+        const history = JSON.parse(fastingHistory)
+        setHistory(history)
+      } catch (error) {
+        console.error("Error parsing history data from localStorage:", error)
+      }
+    }
   }, [])
 
   return (

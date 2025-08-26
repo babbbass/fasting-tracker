@@ -3,12 +3,13 @@ import { FastingRecordType } from "@/lib/types"
 
 interface HistoryState {
   history: FastingRecordType[]
+  setHistory: (history: FastingRecordType[]) => void
   addFastingRecord: (newFastingRecord: FastingRecordType) => void
 }
-const history = localStorage.getItem("fastingHistory")
 
 export const useHistoryStore = create<HistoryState>((set) => ({
-  history: history ? JSON.parse(history) : [],
+  history: [],
+  setHistory: (history) => set({ history }),
   addFastingRecord: (newFastingRecord) =>
     set((state) => ({ history: [newFastingRecord, ...state.history] })),
 }))
