@@ -12,22 +12,12 @@ import { Hourglass, Trash } from "lucide-react"
 import { formatDate, formatDuration } from "@/lib/utils"
 import { useHistoryStore } from "@/lib/historyStore"
 import { DeleteFastingDialog } from "./DeleteFastingDialog"
-import { useState, useCallback, useEffect, use } from "react"
-import { deleteRecordByStartTime } from "@/lib/utils"
+import { useState, useEffect } from "react"
 
 export function History() {
   const [isConfirmOpen, setIsConfirmOpen] = useState(false)
   const [startTimeFastingToDelete, setStartTimeFastingToDelete] = useState("")
   const { history, setHistory } = useHistoryStore()
-
-  const handleCancel = useCallback(() => {
-    setIsConfirmOpen(false)
-  }, [])
-
-  const handleDelete = useCallback((id: string) => {
-    deleteRecordByStartTime(id)
-    setIsConfirmOpen(false)
-  }, [])
 
   useEffect(() => {
     const fastingHistory = localStorage.getItem("fastingHistory")
@@ -93,8 +83,6 @@ export function History() {
       <DeleteFastingDialog
         isConfirmOpen={isConfirmOpen}
         setIsConfirmOpen={setIsConfirmOpen}
-        handleCancel={handleCancel}
-        handleDelete={handleDelete}
         startTimeFastingToDelete={startTimeFastingToDelete}
       />
     </>

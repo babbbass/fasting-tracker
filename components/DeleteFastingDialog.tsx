@@ -8,21 +8,31 @@ import {
 } from "@/components/ui/dialog"
 import { Button } from "./ui/button"
 import { Save, Trash2 } from "lucide-react"
+import { useCallback } from "react"
+import { deleteRecordByStartTime } from "@/lib/utils"
+import { useHistoryStore } from "@/lib/historyStore"
 
 type DeleteFastingDialogType = {
   isConfirmOpen: boolean
   setIsConfirmOpen: React.Dispatch<React.SetStateAction<boolean>>
-  handleCancel: () => void
-  handleDelete: (startTimeFastingToDelete: string) => void
   startTimeFastingToDelete: string
 }
 export function DeleteFastingDialog({
   isConfirmOpen,
   setIsConfirmOpen,
-  handleCancel,
-  handleDelete,
   startTimeFastingToDelete,
 }: DeleteFastingDialogType) {
+  const { deleteFastingRecord } = useHistoryStore()
+
+  const handleDelete = useCallback((id: string) => {
+    deleteFastingRecord(id)
+    deleteRecordByStartTime(id)
+    setIsConfirmOpen(false)
+  }, [])
+
+  const handleCancel = useCallback(() => {
+    setIsConfirmOpen(false)
+  }, [])
   return (
     <Dialog open={isConfirmOpen} onOpenChange={setIsConfirmOpen}>
       <DialogContent className='sm:max-w-[425px]'>

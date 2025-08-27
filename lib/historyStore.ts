@@ -5,6 +5,7 @@ interface HistoryState {
   history: FastingRecordType[]
   setHistory: (history: FastingRecordType[]) => void
   addFastingRecord: (newFastingRecord: FastingRecordType) => void
+  deleteFastingRecord: (startTime: string) => void
 }
 
 export const useHistoryStore = create<HistoryState>((set) => ({
@@ -12,4 +13,9 @@ export const useHistoryStore = create<HistoryState>((set) => ({
   setHistory: (history) => set({ history }),
   addFastingRecord: (newFastingRecord) =>
     set((state) => ({ history: [newFastingRecord, ...state.history] })),
+  deleteFastingRecord: (startTime) => {
+    set((state) => ({
+      history: state.history.filter((record) => record.startTime !== startTime),
+    }))
+  },
 }))
