@@ -5,7 +5,7 @@ import { CurrentFastInfo } from "@/components/CurrentFastInfo"
 import { SaveFastingDialog } from "./SaveFastingDialog"
 import { StartButton } from "@/components/StartButton"
 import { StopButton } from "./StopButton"
-import { GOAL_DURATION } from "@/lib/constants"
+import { useGoalStore } from "@/lib/stores/goalStore"
 import { CircularProgress } from "@/components/CircularProgress"
 import { cn } from "@/lib/utils"
 
@@ -14,6 +14,7 @@ export function Counter() {
   const [elapsedTime, setElapsedTime] = useState<number>(0)
   const [isConfirmOpen, setIsConfirmOpen] = useState(false)
   const [startTime, setStartTime] = useState<Date | null>(null)
+  const { goalDuration } = useGoalStore()
 
   useEffect(() => {
     const activeFastStart = localStorage.getItem("activeFastStartTime")
@@ -42,11 +43,8 @@ export function Counter() {
     }
   }, [isActive, startTime])
 
-  const progressPercentage = GOAL_DURATION
-    ? Math.min(300, (elapsedTime / (GOAL_DURATION * 3600)) * 100)
-    : 0
+  const goalDurationInSeconds = goalDuration * 3600
 
-  const isGoalReached = elapsedTime >= GOAL_DURATION * 3600
   return (
     <>
       <Card className='text-center'>
@@ -54,8 +52,8 @@ export function Counter() {
           <CardTitle
             key={isActive ? "active-title" : "inactive-title"}
             className={cn(
-              "flex items-center justify-center gap-3 text-2xl md:text-3xl font-extrabold tracking-tight", // Typo forte
-              "animate-in fade-in duration-500" // Animation
+              "flex items-center justify-center gap-3 text-2xl md:text-3xl font-extrabold tracking-tight",
+              "animate-in fade-in duration-500"
             )}
           >
             {isActive ? (
@@ -78,18 +76,12 @@ export function Counter() {
           {isActive ? (
             <>
               <CircularProgress
-                progress={progressPercentage}
+                elapsedTime={elapsedTime}
+                goalDuration={goalDurationInSeconds}
                 size={250}
                 strokeWidth={20}
-              >
-                <span
-                  className={`text-center font-mono text-5xl font-extrabold tabular-nums transition-colors ${
-                    isGoalReached ? "text-green-500" : "text-primary"
-                  }`}
-                >
-                  {progressPercentage.toFixed(0)}%
-                </span>
-              </CircularProgress>
+              />
+
               <StopButton setIsConfirmOpen={setIsConfirmOpen} />
             </>
           ) : (

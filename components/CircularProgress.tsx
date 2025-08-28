@@ -1,23 +1,27 @@
 import React from "react"
 
 type CircularProgressProps = {
-  progress: number
+  goalDuration: number
+  elapsedTime: number
   size?: number
   strokeWidth?: number
   className?: string
-  children?: React.ReactNode
+  isGoalReached?: boolean
 }
 
 export function CircularProgress({
-  progress,
   size = 200,
   strokeWidth = 16,
   className,
-  children,
+  goalDuration,
+  elapsedTime,
 }: CircularProgressProps) {
+  const progressPercentage = goalDuration
+    ? Math.min(300, (elapsedTime / goalDuration) * 100)
+    : 0
+  const isGoalReached = elapsedTime >= goalDuration
   // Ensure progress remains between 0 and 100
-  const clampedProgress = Math.min(100, Math.max(0, progress))
-
+  const clampedProgress = Math.min(100, Math.max(0, progressPercentage))
   // Calculations for SVG
   const center = size / 2
   const radius = center - strokeWidth / 2
@@ -55,7 +59,13 @@ export function CircularProgress({
         />
       </svg>
       <div className='absolute inset-0 flex items-center justify-center'>
-        {children}
+        <span
+          className={`text-center font-mono text-5xl font-extrabold tabular-nums transition-colors ${
+            isGoalReached ? "text-green-500" : "text-primary"
+          }`}
+        >
+          {progressPercentage.toFixed(0)}%
+        </span>
       </div>
     </div>
   )
