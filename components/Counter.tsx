@@ -5,6 +5,7 @@ import { formatDuration } from "@/lib/utils"
 import { SaveFastingDialog } from "./SaveFastingDialog"
 import { StartButton } from "@/components/StartButton"
 import { StopButton } from "./StopButton"
+import { GOAL_DURATION } from "@/lib/constants"
 
 export function Counter() {
   const [isActive, setIsActive] = useState<boolean>(false)
@@ -37,8 +38,7 @@ export function Counter() {
     return () => {
       if (interval) clearInterval(interval)
     }
-  }, [isActive, startTime, elapsedTime])
-
+  }, [isActive, startTime])
   return (
     <>
       <Card className='text-center'>
@@ -49,7 +49,13 @@ export function Counter() {
         </CardHeader>
         <CardContent className='space-y-6'>
           <div className='font-mono text-6xl md:text-8xl font-extrabold text-primary tabular-nums'>
-            {formatDuration(elapsedTime)}
+            {elapsedTime < GOAL_DURATION * 3600 ? (
+              formatDuration(GOAL_DURATION * 3600 - elapsedTime)
+            ) : (
+              <span className='text-green-600'>
+                {formatDuration(elapsedTime - GOAL_DURATION * 3600)}{" "}
+              </span>
+            )}
           </div>
           {!isActive ? (
             <StartButton
