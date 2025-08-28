@@ -7,7 +7,9 @@ export function StartFastInfo({ startTime }: { startTime: string }) {
   const hour = date.split(" ")[1]
   return (
     <div className='flex flex-col justify-center'>
-      <span>Débuté</span>
+      <span className='text-sm font-semibold uppercase tracking-wider text-muted-foreground'>
+        Débuté
+      </span>
       <span>{hour}</span>
       <span>{day}</span>
     </div>

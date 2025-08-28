@@ -12,7 +12,15 @@ export function Timepiece({
     <div className={className}>
       {elapsedTime < GOAL_DURATION * 3600 ? (
         <div className='flex flex-col gap-2'>
-          <span className={`${className ? "hidden" : ""}`}>restant</span>
+          <span
+            className={`${
+              className
+                ? "hidden"
+                : "text-sm font-semibold uppercase tracking-wider text-muted-foreground"
+            }`}
+          >
+            restant
+          </span>
           {formatDuration(GOAL_DURATION * 3600 - elapsedTime)}
         </div>
       ) : (

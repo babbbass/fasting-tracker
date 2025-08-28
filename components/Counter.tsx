@@ -7,6 +7,7 @@ import { StartButton } from "@/components/StartButton"
 import { StopButton } from "./StopButton"
 import { GOAL_DURATION } from "@/lib/constants"
 import { CircularProgress } from "@/components/CircularProgress"
+import { cn } from "@/lib/utils"
 
 export function Counter() {
   const [isActive, setIsActive] = useState<boolean>(false)
@@ -50,8 +51,26 @@ export function Counter() {
     <>
       <Card className='text-center'>
         <CardHeader>
-          <CardTitle className='text-2xl md:text-3xl font-bold tracking-tight'>
-            {isActive ? "Jeûne en cours" : "Prêt à jeûner ?"}
+          <CardTitle
+            key={isActive ? "active-title" : "inactive-title"}
+            className={cn(
+              "flex items-center justify-center gap-3 text-2xl md:text-3xl font-extrabold tracking-tight", // Typo forte
+              "animate-in fade-in duration-500" // Animation
+            )}
+          >
+            {isActive ? (
+              <>
+                <span className='relative flex h-3 w-3'>
+                  <span className='animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75'></span>
+                  <span className='relative inline-flex rounded-full h-3 w-3 bg-green-500'></span>
+                </span>
+                <span className='bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent'>
+                  Jeûne en cours
+                </span>
+              </>
+            ) : (
+              <span>Prêt à jeûner ?</span>
+            )}
           </CardTitle>
         </CardHeader>
         <CardContent className='space-y-6'>

@@ -22,7 +22,7 @@ export function CurrentFastInfo({
       ) : (
         <Timepiece
           elapsedTime={0}
-          className='font-mono text-xl md:text-8xl font-extrabold text-primary'
+          className='text-5xl md:text-8xl font-extrabold text-primary'
         />
       )}
     </div>

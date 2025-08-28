@@ -51,7 +51,7 @@ export function CircularProgress({
           strokeDasharray={circumference}
           strokeDashoffset={offset}
           strokeLinecap='round'
-          className='stroke-primary transition-[stroke-dashoffset] duration-500 ease-out' // Couleur de la progression
+          className='stroke-primary transition-[stroke-dashoffset] duration-500 ease-out' // Color progression
         />
       </svg>
       <div className='absolute inset-0 flex items-center justify-center'>
