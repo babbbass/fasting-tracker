@@ -1,11 +1,12 @@
 "use client"
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { formatDuration } from "@/lib/utils"
+import { Timepiece } from "@/components/Timepiece"
 import { SaveFastingDialog } from "./SaveFastingDialog"
 import { StartButton } from "@/components/StartButton"
 import { StopButton } from "./StopButton"
 import { GOAL_DURATION } from "@/lib/constants"
+import { CircularProgress } from "@/components/CircularProgress"
 
 export function Counter() {
   const [isActive, setIsActive] = useState<boolean>(false)
@@ -39,6 +40,12 @@ export function Counter() {
       if (interval) clearInterval(interval)
     }
   }, [isActive, startTime])
+
+  const progressPercentage = GOAL_DURATION
+    ? Math.min(300, (elapsedTime / (GOAL_DURATION * 3600)) * 100)
+    : 0
+
+  const isGoalReached = elapsedTime >= GOAL_DURATION * 3600
   return (
     <>
       <Card className='text-center'>
@@ -48,23 +55,30 @@ export function Counter() {
           </CardTitle>
         </CardHeader>
         <CardContent className='space-y-6'>
-          <div className='font-mono text-6xl md:text-8xl font-extrabold text-primary tabular-nums'>
-            {elapsedTime < GOAL_DURATION * 3600 ? (
-              formatDuration(GOAL_DURATION * 3600 - elapsedTime)
-            ) : (
-              <span className='text-green-600'>
-                {formatDuration(elapsedTime - GOAL_DURATION * 3600)}{" "}
-              </span>
-            )}
-          </div>
-          {!isActive ? (
+          <Timepiece elapsedTime={elapsedTime} />
+          {isActive ? (
+            <>
+              <CircularProgress
+                progress={progressPercentage}
+                size={250}
+                strokeWidth={20}
+              >
+                <span
+                  className={`text-center font-mono text-5xl font-extrabold tabular-nums transition-colors ${
+                    isGoalReached ? "text-green-500" : "text-primary"
+                  }`}
+                >
+                  {progressPercentage.toFixed(0)}%
+                </span>
+              </CircularProgress>
+              <StopButton setIsConfirmOpen={setIsConfirmOpen} />
+            </>
+          ) : (
             <StartButton
               setElapsedTime={setElapsedTime}
               setIsActive={setIsActive}
               setStartTime={setStartTime}
             />
-          ) : (
-            <StopButton setIsConfirmOpen={setIsConfirmOpen} />
           )}
         </CardContent>
       </Card>
