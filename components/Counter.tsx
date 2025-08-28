@@ -1,7 +1,7 @@
 "use client"
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Timepiece } from "@/components/Timepiece"
+import { CurrentFastInfo } from "@/components/CurrentFastInfo"
 import { SaveFastingDialog } from "./SaveFastingDialog"
 import { StartButton } from "@/components/StartButton"
 import { StopButton } from "./StopButton"
@@ -55,7 +55,7 @@ export function Counter() {
           </CardTitle>
         </CardHeader>
         <CardContent className='space-y-6'>
-          <Timepiece elapsedTime={elapsedTime} />
+          <CurrentFastInfo elapsedTime={elapsedTime} startTime={startTime} />
           {isActive ? (
             <>
               <CircularProgress

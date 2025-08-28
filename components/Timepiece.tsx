@@ -1,11 +1,20 @@
 import { formatDuration } from "@/lib/utils"
 import { GOAL_DURATION } from "@/lib/constants"
 
-export function Timepiece({ elapsedTime }: { elapsedTime: number }) {
+export function Timepiece({
+  elapsedTime,
+  className,
+}: {
+  elapsedTime: number
+  className?: string
+}) {
   return (
-    <div className='font-mono text-6xl md:text-8xl font-extrabold text-primary tabular-nums'>
+    <div className={className}>
       {elapsedTime < GOAL_DURATION * 3600 ? (
-        formatDuration(GOAL_DURATION * 3600 - elapsedTime)
+        <div className='flex flex-col gap-2'>
+          <span className={`${className ? "hidden" : ""}`}>restant</span>
+          {formatDuration(GOAL_DURATION * 3600 - elapsedTime)}
+        </div>
       ) : (
         <span className='text-green-600'>
           {formatDuration(elapsedTime - GOAL_DURATION * 3600)}{" "}
