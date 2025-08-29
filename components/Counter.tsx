@@ -7,6 +7,7 @@ import { StartButton } from "@/components/StartButton"
 import { StopButton } from "./StopButton"
 import { useGoalStore } from "@/lib/stores/goalStore"
 import { CircularProgress } from "@/components/CircularProgress"
+import { AppSkeleton } from "@/components/AppSkeleton"
 import { cn } from "@/lib/utils"
 
 export function Counter() {
@@ -14,9 +15,10 @@ export function Counter() {
   const [elapsedTime, setElapsedTime] = useState<number>(0)
   const [isConfirmOpen, setIsConfirmOpen] = useState(false)
   const [startTime, setStartTime] = useState<Date | null>(null)
-  const { goalDuration } = useGoalStore()
+  const { goalDuration, hydrate, _hasHydrated } = useGoalStore()
 
   useEffect(() => {
+    hydrate()
     const activeFastStart = localStorage.getItem("activeFastStartTime")
     if (activeFastStart) {
       const startTimeDate = new Date(activeFastStart)
@@ -26,7 +28,7 @@ export function Counter() {
         Math.floor((new Date().getTime() - startTimeDate.getTime()) / 1000)
       )
     }
-  }, [])
+  }, [hydrate])
 
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null
@@ -44,6 +46,10 @@ export function Counter() {
   }, [isActive, startTime])
 
   const goalDurationInSeconds = goalDuration * 3600
+
+  if (!_hasHydrated) {
+    return <AppSkeleton />
+  }
 
   return (
     <>

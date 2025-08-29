@@ -13,8 +13,8 @@ import { useGoalStore } from "@/lib/stores/goalStore"
 type GoalDialogType = {
   isConfirmOpen: boolean
   setIsConfirmOpen: (value: boolean) => void
-  handleConfirmation: (hours: number) => void
 }
+
 export function GoalDialog({
   isConfirmOpen,
   setIsConfirmOpen,

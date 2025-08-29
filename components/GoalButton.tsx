@@ -13,12 +13,11 @@ export function GoalButton() {
         onClick={() => setIsConfirmOpen(true)}
       >
         <Target className='h-10 w-10' />
-        Goal
+        Objectif
       </Button>
       <GoalDialog
         isConfirmOpen={isConfirmOpen}
         setIsConfirmOpen={setIsConfirmOpen}
-        handleConfirmation={() => {}}
       />
     </>
   )
