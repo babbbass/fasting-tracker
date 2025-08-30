@@ -1,0 +1,20 @@
+<svg width="200" height="200" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- 
+    Le Cercle de fond.
+    Remplacez #1A1D26 par la couleur de fond de vos cartes si besoin.
+  -->
+  <circle cx="50" cy="50" r="48" fill="#1A1D26"/>
+  
+  <!-- 
+    L'icône du sablier minimaliste.
+    Remplacez #2DD4BF par votre couleur Teal/Cyan si besoin.
+    C'est la version HEX de oklch(60% 0.118 184.704).
+  -->
+  <g stroke="#2DD4BF" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Triangle du haut -->
+    <path d="M30 32 L50 48 L70 32" fill="#2DD4BF" />
+    
+    <!-- Triangle du bas -->
+    <path d="M30 68 L50 52 L70 68" />
+  </g>
+</svg>

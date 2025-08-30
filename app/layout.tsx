@@ -9,8 +9,9 @@ const fontSans = FontSans({
 })
 
 export const metadata: Metadata = {
-  title: "Fasting Tracker PWA",
-  description: "Track your intermittent fasting periods",
+  title: "Fasting Record",
+  description:
+    "Une application simple pour suivre vos périodes de jeûne intermittent.",
 }
 
 export default function RootLayout({
@@ -19,10 +20,11 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang='en' suppressHydrationWarning>
+    <html lang='fr' suppressHydrationWarning>
       <head>
+        <link rel='icon' href='/logo.svg' type='image/svg+xml' />
         <link rel='manifest' href='/manifest.json' />
-        <meta name='theme-color' content='#09090b' />
+        <meta name='theme-color' content='#1A1D26' />
       </head>
       <body
         className={cn(
