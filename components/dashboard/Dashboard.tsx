@@ -85,7 +85,6 @@ export function Dashboard() {
     const consistency = last7Days.map((day) =>
       history.some((record) => new Date(record.endTime).toDateString() === day)
     )
-    console.log("average", averageFast)
     return {
       totalFasts,
       longestFast,
