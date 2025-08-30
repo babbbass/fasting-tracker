@@ -1,4 +1,5 @@
 import React from "react"
+import { cn } from "@/lib/utils"
 
 type CircularProgressProps = {
   goalDuration: number
@@ -55,7 +56,10 @@ export function CircularProgress({
           strokeDasharray={circumference}
           strokeDashoffset={offset}
           strokeLinecap='round'
-          className='stroke-primary transition-[stroke-dashoffset] duration-500 ease-out' // Color progression
+          className={cn(
+            "stroke-primary transition-[stroke-dashoffset] duration-500 ease-out",
+            isGoalReached && "stroke-green-500"
+          )} // Color progression
         />
       </svg>
       <div className='absolute inset-0 flex items-center justify-center'>
