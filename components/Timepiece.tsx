@@ -26,9 +26,14 @@ export function Timepiece({
           {formatDuration(goalDurationInSeconds - elapsedTime)}
         </div>
       ) : (
-        <span className='text-green-600'>
-          {formatDuration(elapsedTime - goalDurationInSeconds)}{" "}
-        </span>
+        <div className='flex flex-col gap-2'>
+          <span className='text-sm font-semibold tracking-wider text-muted-foreground'>
+            En bonus
+          </span>
+          <span className='text-green-500'>
+            {formatDuration(elapsedTime - goalDurationInSeconds)}{" "}
+          </span>
+        </div>
       )}
     </div>
   )
