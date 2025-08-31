@@ -68,7 +68,7 @@
   --accent-foreground: oklch(15% 0.02 240);
   --accent-card-theme: oklch(96% 0.007 240);
 
-  --destructive: oklch(65% 0.2 25); /* Un rouge doux pour la suppression */
+  --destructive: oklch(65% 0.2 25);
   --destructive-foreground: oklch(98% 0.003 265);
 
   --border: oklch(60% 0.118 184.704 / 40%);
@@ -98,8 +98,7 @@
   --muted-foreground: oklch(70% 0.01 240);
 
   --accent: oklch(60% 0.118 184.704);
-  --accent-foreground: oklch(15% 0.02 240);
-  --accent-card-theme: oklch(96% 0.007 240);
+  --accent-foreground: oklch(60% 0.118 184.704);
 
   --destructive: oklch(65% 0.2 25);
   --destructive-foreground: oklch(98% 0.003 265);
@@ -130,7 +129,6 @@
 
   --accent: oklch(60% 0.118 184.704);
   --accent-foreground: oklch(96% 0.007 240);
-  --accent-card-theme: oklch(96% 0.007 240);
 }
 
 @layer base {
