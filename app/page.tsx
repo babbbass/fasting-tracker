@@ -3,6 +3,7 @@ import { Counter } from "@/components/Counter"
 import { Goal } from "@/components/Goal"
 import { Dashboard } from "@/components/dashboard/Dashboard"
 import { ThemeToggle } from "@/components/ThemeToggle"
+import { InstallPwa } from "@/components/pwa/InstallPwa"
 
 export default function HomePage() {
   return (
@@ -13,6 +14,7 @@ export default function HomePage() {
         <Counter />
         <Dashboard />
         <History />
+        <InstallPwa />
       </div>
     </main>
   )
