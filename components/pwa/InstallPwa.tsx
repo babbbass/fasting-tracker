@@ -1,12 +1,14 @@
 "use client"
 import { useState, useEffect } from "react"
 import { InstallPwaPrompt } from "@/components/pwa/InstallPwaPrompt"
+import { InstallPwaPromptIOS } from "@/components/pwa/InstallPwaPromptIOS"
 
 export function InstallPwa() {
   const [deferredPrompt, setDeferredPrompt] = useState<null | {
     prompt: () => void
   }>(null)
   const [showInstallPrompt, setShowInstallPrompt] = useState(false)
+  const [isIOS, setIsIOS] = useState(false)
 
   async function handleInstall() {
     if (deferredPrompt) {
@@ -20,6 +22,9 @@ export function InstallPwa() {
   }
 
   useEffect(() => {
+    // check Apple or not
+    const isIOSDevice = /iPad|iPhone|iPod/.test(navigator.userAgent)
+    setIsIOS(isIOSDevice)
     // check app is installed
     const isStandalone = window.matchMedia("(display-mode: standalone)").matches
 
@@ -44,9 +49,15 @@ export function InstallPwa() {
 
   return (
     <div>
-      {showInstallPrompt && (
-        <InstallPwaPrompt onInstall={handleInstall} onDismiss={handleDismiss} />
-      )}
+      {showInstallPrompt &&
+        (isIOS ? (
+          <InstallPwaPromptIOS onDismiss={handleDismiss} />
+        ) : (
+          <InstallPwaPrompt
+            onInstall={handleInstall}
+            onDismiss={handleDismiss}
+          />
+        ))}
     </div>
   )
 }
